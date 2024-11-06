@@ -27,6 +27,9 @@ public class TranslationEntity {
     @Column(name = "description")
     String description;
 
+    @Column(name = "creator")
+    String creator;
+
     @Column(name = "origin_language")
     String originLanguage;
 

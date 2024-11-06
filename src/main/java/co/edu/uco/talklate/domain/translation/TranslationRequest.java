@@ -14,6 +14,7 @@ import java.util.Date;
 public class TranslationRequest {
 
     String description;
+    String creator;
     String originLanguage;
     String targetLanguage;
     Date startDate;
