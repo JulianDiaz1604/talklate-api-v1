@@ -60,8 +60,8 @@ public class TranslationController {
         }
     }
 
-    @DeleteMapping(value = "delete")
-    public ResponseEntity<?> deleteRequest(UUID id) {
+    @DeleteMapping(value = "delete/{id}")
+    public ResponseEntity<?> deleteRequest(@PathVariable UUID id) {
         try {
             Boolean response = translationService.deleteTranslation(id);
             if (response) {
