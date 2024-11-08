@@ -10,7 +10,10 @@ import co.edu.uco.talklate.repository.entities.UserEntity;
 import co.edu.uco.talklate.service.AuthenticationService;
 import co.edu.uco.talklate.service.JwtService;
 import co.edu.uco.talklate.util.mapper.GenericMapper;
+import co.edu.uco.talklate.util.validator.NullValidator;
+import co.edu.uco.talklate.util.validator.RegisterValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +24,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final GenericMapper mapper = new GenericMapper();
@@ -31,24 +35,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthResponse register(RegisterRequest request) {
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .name(request.getName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .documentType(request.getDocumentType())
-                .documentNumber(request.getDocumentNumber())
-                .phoneNumber(request.getPhoneNumber())
-                .birthDate(request.getBirthDate())
-                .role(Role.USER)
-                .build();
-        userRepository.save(mapper.map(user, UserEntity.class));
-
-        return AuthResponse.builder()
-                .token(jwtService.getToken(user))
-                .build();
+        NullValidator<RegisterRequest> nullValidator = new NullValidator<>();
+        RegisterValidator registerValidator = new RegisterValidator(userRepository);
+        User user;
+        try {
+            nullValidator.validateFields(request);
+            registerValidator.validate(request);
+            user = User.builder()
+                    .id(UUID.randomUUID())
+                    .name(request.getName())
+                    .lastName(request.getLastName())
+                    .email(request.getEmail())
+                    .username(request.getUsername())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .documentType(request.getDocumentType())
+                    .documentNumber(request.getDocumentNumber())
+                    .phoneNumber(request.getPhoneNumber())
+                    .birthDate(request.getBirthDate())
+                    .role(Role.USER)
+                    .build();
+            userRepository.save(mapper.map(user, UserEntity.class));
+            return AuthResponse.builder()
+                    .token(jwtService.getToken(user))
+                    .build();
+        } catch (IllegalArgumentException e) {
+            log.error("Validation error: {}", e.getMessage());
+            throw new RuntimeException("Invalid request: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("An error occurred during registration: {}", e.getMessage(), e);
+            throw new RuntimeException("Registration failed due to an internal error.");
+        }
     }
 
     @Override
