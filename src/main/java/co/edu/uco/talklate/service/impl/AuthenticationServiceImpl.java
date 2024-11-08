@@ -57,6 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             userRepository.save(mapper.map(user, UserEntity.class));
             return AuthResponse.builder()
                     .token(jwtService.getToken(user))
+                    .username(user.getUsername())
                     .build();
         } catch (IllegalArgumentException e) {
             log.error("Validation error: {}", e.getMessage());
