@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegisterValidator {
 
+    private static final String USERNAME_REGEX = "^[a-zA-Z0-9._-]{3,}$";
     private static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     private static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
 
@@ -36,6 +37,9 @@ public class RegisterValidator {
     }
 
     private void validateUsername(String username) {
+        if (!Pattern.matches(USERNAME_REGEX, username)) {
+            throw new IllegalArgumentException("Username must be at least 3 characters long and can contain letters, numbers, dots, hyphens, and underscores");
+        }
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username is already taken");
         }

@@ -10,12 +10,12 @@ import co.edu.uco.talklate.repository.entities.UserEntity;
 import co.edu.uco.talklate.service.AuthenticationService;
 import co.edu.uco.talklate.service.JwtService;
 import co.edu.uco.talklate.util.mapper.GenericMapper;
+import co.edu.uco.talklate.util.validator.LoginValidator;
 import co.edu.uco.talklate.util.validator.NullValidator;
 import co.edu.uco.talklate.util.validator.RegisterValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -69,12 +69,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token = jwtService.getToken(user);
-        return AuthResponse.builder()
-                .token(token)
-                .build();
+        LoginValidator loginValidator = new LoginValidator(authenticationManager);
+        try {
+            loginValidator.validate(request.getUsername(), request.getPassword());
+            UserDetails user = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            String token = jwtService.getToken(user);
+            return AuthResponse.builder()
+                    .token(token)
+                    .username(user.getUsername())
+                    .build();
+        } catch (IllegalArgumentException e) {
+            log.error("Login validation error: {}", e.getMessage());
+            throw new RuntimeException("Login failed: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("An error occurred during login: {}", e.getMessage(), e);
+            throw new RuntimeException("Login failed due to an internal error.");
+        }
     }
 
 }
