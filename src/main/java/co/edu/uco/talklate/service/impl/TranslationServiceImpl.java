@@ -1,7 +1,8 @@
 package co.edu.uco.talklate.service.impl;
 
-import co.edu.uco.talklate.domain.translation.TranslationRequest;
+import co.edu.uco.talklate.domain.translation.TranslationCreateRequest;
 import co.edu.uco.talklate.domain.translation.TranslationResponse;
+import co.edu.uco.talklate.domain.translation.TranslationUpdateRequest;
 import co.edu.uco.talklate.repository.TranslationRepository;
 import co.edu.uco.talklate.repository.entities.TranslationEntity;
 import co.edu.uco.talklate.service.TranslationService;
@@ -23,11 +24,11 @@ public class TranslationServiceImpl implements TranslationService {
     private final GenericMapper mapper;
 
     @Override
-    public TranslationResponse createTranslation(TranslationRequest translationRequest) {
-        NullValidator<TranslationRequest> validator = new NullValidator<>();
+    public TranslationResponse createTranslation(TranslationCreateRequest translationCreateRequest) {
+        NullValidator<TranslationCreateRequest> validator = new NullValidator<>();
         try {
-            validator.validateFields(translationRequest);
-            TranslationEntity translationEntity = mapper.map(translationRequest, TranslationEntity.class);
+            validator.validateFields(translationCreateRequest);
+            TranslationEntity translationEntity = mapper.map(translationCreateRequest, TranslationEntity.class);
             translationEntity.setId(UUID.randomUUID());
             return mapper.map(translationRepository.save(translationEntity), TranslationResponse.class);
         } catch (IllegalArgumentException e) {
@@ -50,11 +51,11 @@ public class TranslationServiceImpl implements TranslationService {
     }
 
     @Override
-    public TranslationResponse updateTranslation(TranslationRequest translationRequest) {
-        NullValidator<TranslationRequest> validator = new NullValidator<>();
+    public TranslationResponse updateTranslation(TranslationUpdateRequest translationUpdateRequest) {
+        NullValidator<TranslationUpdateRequest> validator = new NullValidator<>();
         try {
-            validator.validateFields(translationRequest);
-            TranslationEntity translationEntity = mapper.map(translationRequest, TranslationEntity.class);
+            validator.validateFields(translationUpdateRequest);
+            TranslationEntity translationEntity = mapper.map(translationUpdateRequest, TranslationEntity.class);
             return mapper.map(translationRepository.save(translationEntity), TranslationResponse.class);
         } catch (IllegalArgumentException e) {
             log.error("Validation error: {}", e.getMessage());

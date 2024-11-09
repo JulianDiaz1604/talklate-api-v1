@@ -1,7 +1,8 @@
 package co.edu.uco.talklate.controller;
 
-import co.edu.uco.talklate.domain.translation.TranslationRequest;
+import co.edu.uco.talklate.domain.translation.TranslationCreateRequest;
 import co.edu.uco.talklate.domain.translation.TranslationResponse;
+import co.edu.uco.talklate.domain.translation.TranslationUpdateRequest;
 import co.edu.uco.talklate.service.TranslationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,9 @@ public class TranslationController {
     private final TranslationService translationService;
 
     @PostMapping(value = "create")
-    public ResponseEntity<?> createRequest(@RequestBody TranslationRequest translationRequest) {
+    public ResponseEntity<?> createRequest(@RequestBody TranslationCreateRequest translationCreateRequest) {
         try {
-            TranslationResponse translationResponse = translationService.createTranslation(translationRequest);
+            TranslationResponse translationResponse = translationService.createTranslation(translationCreateRequest);
             if (translationResponse != null) {
                 return ResponseEntity.ok(translationResponse);
             } else {
@@ -47,9 +48,9 @@ public class TranslationController {
     }
 
     @PostMapping(value = "update")
-    public ResponseEntity<?> updateRequest(@RequestBody TranslationRequest translationRequest) {
+    public ResponseEntity<?> updateRequest(@RequestBody TranslationUpdateRequest translationUpdateRequest) {
         try {
-            TranslationResponse translationResponse = translationService.updateTranslation(translationRequest);
+            TranslationResponse translationResponse = translationService.updateTranslation(translationUpdateRequest);
             if (translationResponse != null) {
                 return ResponseEntity.ok(translationResponse);
             } else {

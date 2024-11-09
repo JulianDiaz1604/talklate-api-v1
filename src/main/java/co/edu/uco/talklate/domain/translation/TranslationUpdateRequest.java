@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TranslationRequest {
+public class TranslationUpdateRequest {
 
+    UUID id;
     String description;
     String creator;
     String originLanguage;
