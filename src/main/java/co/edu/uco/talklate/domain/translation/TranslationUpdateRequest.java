@@ -17,6 +17,7 @@ public class TranslationUpdateRequest {
     UUID id;
     String description;
     String creator;
+    String translator;
     String originLanguage;
     String targetLanguage;
     Date startDate;

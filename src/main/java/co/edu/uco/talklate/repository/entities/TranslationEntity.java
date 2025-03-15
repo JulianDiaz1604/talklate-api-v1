@@ -30,6 +30,9 @@ public class TranslationEntity {
     @Column(name = "creator")
     String creator;
 
+    @Column(name = "translator")
+    String translator;
+
     @Column(name = "origin_language")
     String originLanguage;
 

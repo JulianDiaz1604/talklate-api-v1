@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -73,11 +74,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         LoginValidator loginValidator = new LoginValidator(authenticationManager);
         try {
             loginValidator.validate(request.getUsername(), request.getPassword());
-            UserDetails user = userRepository.findByUsername(request.getUsername())
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            User user = mapper.map(userRepository.findByUsername(request.getUsername()).get(), User.class);
+            if (user == null) {
+                throw new UsernameNotFoundException("User " + request.getUsername() + " not found.");
+            }
             String token = jwtService.getToken(user);
             return AuthResponse.builder()
                     .token(token)
+                    .fullName(user.getName() + " " + user.getLastName())
                     .username(user.getUsername())
                     .build();
         } catch (IllegalArgumentException e) {

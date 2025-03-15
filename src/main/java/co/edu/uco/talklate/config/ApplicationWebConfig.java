@@ -52,7 +52,7 @@ public class ApplicationWebConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://127.0.0.1:5173"); // Especifica tu origen
+        configuration.addAllowedOrigin("http://localhost:8081"); // Especifica tu origen
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
