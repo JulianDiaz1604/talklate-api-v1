@@ -83,4 +83,17 @@ public class TranslationServiceImpl implements TranslationService {
         }
     }
 
+    @Override
+    public TranslationResponse getTranslationById(UUID id) {
+        try {
+            if (!translationRepository.existsById(id)) {
+                throw new IllegalArgumentException("Translation with id " + id + " does not exist.");
+            }
+            return mapper.map(translationRepository.findById(id), TranslationResponse.class);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("Invalid translation request: " + e.getMessage());
+        }
+    }
+
 }

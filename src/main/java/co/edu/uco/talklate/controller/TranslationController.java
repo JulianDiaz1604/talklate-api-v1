@@ -47,6 +47,20 @@ public class TranslationController {
         }
     }
 
+    @GetMapping(value = "findById/{id}")
+    public ResponseEntity<?> getAByIdRequest(@PathVariable UUID id) {
+        try {
+            TranslationResponse translationResponse = translationService.getTranslationById(id);
+            if (translationResponse != null) {
+                return ResponseEntity.ok(translationResponse);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error getting request list");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping(value = "update")
     public ResponseEntity<?> updateRequest(@RequestBody TranslationUpdateRequest translationUpdateRequest) {
         try {

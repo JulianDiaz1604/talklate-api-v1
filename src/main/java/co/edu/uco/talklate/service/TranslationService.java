@@ -13,5 +13,6 @@ public interface TranslationService {
     ArrayList<TranslationResponse> listAllTranslations();
     TranslationResponse updateTranslation(TranslationUpdateRequest translationRequest);
     boolean deleteTranslation(UUID uuid);
+    TranslationResponse getTranslationById(UUID uuid);
 
 }
